@@ -26,6 +26,7 @@ type Project = {
   tags: string[];
   github: string | null;
   demo: string | null;
+  previewImg?: string;
 };
 
 type InfoRow = {
@@ -33,6 +34,7 @@ type InfoRow = {
   tone: string;
   title: Record<Lang, string>;
   subtitle: Record<Lang, string>;
+  expandable?: { previewImg: string; link: string; linkLabel: string };
 };
 
 const PROJECTS: Project[] = [
@@ -56,6 +58,7 @@ const PROJECTS: Project[] = [
     tags: ["Java 21", "Spring Boot", "Redis", "Kafka", "Elasticsearch", "Spring AI"],
     github: "https://github.com/runlingli",
     demo: "https://lingocafe.online",
+    previewImg: "https://api.microlink.io/?url=https%3A%2F%2Flingocafe.online&screenshot=true&embed=screenshot.url",
   },
   {
     icon: "layers",
@@ -76,7 +79,8 @@ const PROJECTS: Project[] = [
     },
     tags: ["Python", "Flask", "pgvector", "DeepSeek", "GCP Cloud Run", "Cloud SQL"],
     github: "https://github.com/runlingli",
-    demo: null,
+    demo: "https://apps.apple.com/us/app/aconn/id6760412162",
+    previewImg: "https://api.microlink.io/?url=https%3A%2F%2Fapps.apple.com%2Fus%2Fapp%2Faconn%2Fid6760412162&screenshot=true&embed=screenshot.url",
   },
   {
     icon: "brain",
@@ -126,6 +130,11 @@ const STATUS_ROWS: InfoRow[] = [
     tone: "p",
     title: { en: "Software Engineer · CodeLab × Google", zh: "软件工程师 · CodeLab × Google" },
     subtitle: { en: "Resume matching pipeline · GCP Cloud Run", zh: "简历匹配系统 · GCP Cloud Run" },
+    expandable: {
+      previewImg: "https://api.microlink.io/?url=https%3A%2F%2Fcodelabdavis.com&screenshot=true&embed=screenshot.url",
+      link: "https://codelabdavis.com",
+      linkLabel: "codelabdavis.com",
+    },
   },
   {
     icon: "zap",
@@ -738,7 +747,7 @@ function App() {
           <div className="card card-status hov">
             <div className="ctitle">{copy(lang, "// currently", "// 当前状态")}</div>
             {STATUS_ROWS.map((row) => (
-              <StatusRow key={row.title.en} icon={row.icon} tone={row.tone} title={row.title[lang]} subtitle={row.subtitle[lang]} />
+              <StatusRow key={row.title.en} icon={row.icon} tone={row.tone} title={row.title[lang]} subtitle={row.subtitle[lang]} expandable={row.expandable} />
             ))}
           </div>
 
@@ -957,7 +966,9 @@ function App() {
                 {modalProject.demo ? (
                   <a href={modalProject.demo} className="mlink pri" target="_blank" rel="noreferrer">
                     <LucideIcon name="external-link" size={13} />
-                    {copy(lang, "Live Demo", "查看演示")}
+                    {modalProject.name.en === "Aconn"
+                      ? copy(lang, "App Store", "App Store")
+                      : copy(lang, "Live Demo", "查看演示")}
                   </a>
                 ) : null}
               </div>
@@ -993,18 +1004,42 @@ type StatusRowProps = {
   tone: string;
   title: string;
   subtitle: string;
+  expandable?: { previewImg: string; link: string; linkLabel: string };
 };
 
-function StatusRow({ icon, tone, title, subtitle }: StatusRowProps) {
+function StatusRow({ icon, tone, title, subtitle, expandable }: StatusRowProps) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (open) window.lucide?.createIcons();
+  }, [open]);
+
   return (
-    <div className="srow">
+    <div
+      className={`srow ${expandable ? "srow-expandable" : ""}`}
+      onClick={expandable ? () => setOpen((o) => !o) : undefined}
+    >
       <div className={`sicon ${tone}`}>
         <LucideIcon name={icon} size={15} />
       </div>
-      <div>
+      <div className="srow-body">
         <strong>{title}</strong>
         <span>{subtitle}</span>
+        {expandable && open && (
+          <div className="srow-expand" onClick={(e) => e.stopPropagation()}>
+            <img src={expandable.previewImg} alt={title} loading="lazy" className="srow-preview-img" />
+            <a href={expandable.link} target="_blank" rel="noreferrer" className="srow-link">
+              <LucideIcon name="external-link" size={10} />
+              {expandable.linkLabel}
+            </a>
+          </div>
+        )}
       </div>
+      {expandable && (
+        <span className="srow-chevron">
+          <LucideIcon name={open ? "chevron-up" : "chevron-down"} size={12} />
+        </span>
+      )}
     </div>
   );
 }
@@ -1034,6 +1069,14 @@ function SkillGroup({ lang, labelEn, labelZh, items }: SkillGroupProps) {
 function ProjectPreview({ project, index }: { project: Project; index: number }) {
   const patternId = `project-pattern-${index}`;
 
+  if (project.previewImg) {
+    return (
+      <div className="ppreview">
+        <img src={project.previewImg} alt={project.name.en} loading="lazy" className="ppreview-img" />
+      </div>
+    );
+  }
+
   return (
     <div className="ppreview">
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
@@ -1055,6 +1098,10 @@ function ProjectPreview({ project, index }: { project: Project; index: number })
 
 function ModalPreview({ project, index }: { project: Project; index: number }) {
   const patternId = `modal-pattern-${index}`;
+
+  if (project.previewImg) {
+    return <img src={project.previewImg} alt={project.name.en} loading="lazy" className="modal-prev-img" />;
+  }
 
   return (
     <>
