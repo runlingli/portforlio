@@ -144,7 +144,7 @@ const STATUS_ROWS: InfoRow[] = [
 ];
 
 const CODELAB_EXP = {
-  previewImg: _p("codelab1.png"),
+  previewImg: _p("codelab1.jpg"),
   title: { en: "CodeLab × Google", zh: "CodeLab × Google" },
   role: { en: "Software Engineer", zh: "软件工程师" },
   description: {
@@ -1105,35 +1105,36 @@ function SkillGroup({ lang, labelEn, labelZh, items }: SkillGroupProps) {
 
 function Slideshow({ imgs }: { imgs: string[] }) {
   const [idx, setIdx] = useState(0);
-  const [fade, setFade] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (imgs.length <= 1) return;
+    timerRef.current = setInterval(() => setIdx((n) => (n + 1) % imgs.length), 3000);
+  }, [imgs.length]);
 
   useEffect(() => {
-    if (imgs.length <= 1) return;
-    const t = setInterval(() => {
-      setFade(false);
-      setTimeout(() => { setIdx((n) => (n + 1) % imgs.length); setFade(true); }, 220);
-    }, 3000);
-    return () => clearInterval(t);
-  }, [imgs.length]);
+    startTimer();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [startTimer]);
+
+  const goTo = (i: number) => { setIdx(i); startTimer(); };
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <img
-        src={imgs[idx]}
-        alt=""
-        className="modal-prev-img"
-        style={{ opacity: fade ? 1 : 0, transition: "opacity .22s ease" }}
-      />
+      <img src={imgs[idx]} alt="" className="modal-prev-img" />
       {imgs.length > 1 && (
         <div className="slideshow-dots">
-          {imgs.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`slideshow-dot ${i === idx ? "active" : ""}`}
-              onClick={() => { setIdx(i); setFade(true); }}
-            />
-          ))}
+          <div className="slideshow-dots-pill">
+            {imgs.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`slideshow-dot ${i === idx ? "active" : ""}`}
+                onClick={() => goTo(i)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

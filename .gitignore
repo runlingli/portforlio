@@ -1,3 +1,9 @@
 node_modules
 dist
+.DS_Store
+*.pdf
+*.docx
+Portfolio.html
+Portfolio_star.html
+globe-loader.html
 

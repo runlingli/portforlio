@@ -888,30 +888,40 @@ canvas { display: block; }
 
 .slideshow-dots {
   position: absolute;
-  bottom: 10px;
+  bottom: 12px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 6px;
   pointer-events: none;
 }
 
+.slideshow-dots-pill {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  background: rgba(0,0,0,0.38);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 7px 12px;
+  border-radius: 100px;
+  pointer-events: all;
+}
+
 .slideshow-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   border: none;
   background: rgba(255,255,255,0.45);
   cursor: pointer;
   padding: 0;
-  pointer-events: all;
   transition: background .18s ease, transform .18s ease;
 }
 
 .slideshow-dot.active {
   background: #fff;
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
 
 .modal-prev-lbl {
