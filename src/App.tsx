@@ -12,6 +12,9 @@ declare global {
 
 type Lang = "en" | "zh";
 
+const _base = import.meta.env.BASE_URL;
+const _p = (file: string) => `${_base}previews/${file}`;
+
 type Project = {
   icon: string;
   iconBackground: string;
@@ -34,7 +37,7 @@ type InfoRow = {
   tone: string;
   title: Record<Lang, string>;
   subtitle: Record<Lang, string>;
-  expandable?: { previewImg: string; link: string; linkLabel: string };
+  modal?: boolean;
 };
 
 const PROJECTS: Project[] = [
@@ -58,7 +61,7 @@ const PROJECTS: Project[] = [
     tags: ["Java 21", "Spring Boot", "Redis", "Kafka", "Elasticsearch", "Spring AI"],
     github: "https://github.com/runlingli",
     demo: "https://lingocafe.online",
-    previewImg: "https://api.microlink.io/?url=https%3A%2F%2Flingocafe.online&screenshot=true&embed=screenshot.url",
+    previewImg: _p("lingocafe.png"),
   },
   {
     icon: "layers",
@@ -80,7 +83,7 @@ const PROJECTS: Project[] = [
     tags: ["Python", "Flask", "pgvector", "DeepSeek", "GCP Cloud Run", "Cloud SQL"],
     github: "https://github.com/runlingli",
     demo: "https://apps.apple.com/us/app/aconn/id6760412162",
-    previewImg: "https://api.microlink.io/?url=https%3A%2F%2Fapps.apple.com%2Fus%2Fapp%2Faconn%2Fid6760412162&screenshot=true&embed=screenshot.url",
+    previewImg: _p("aconn.png"),
   },
   {
     icon: "brain",
@@ -130,11 +133,7 @@ const STATUS_ROWS: InfoRow[] = [
     tone: "p",
     title: { en: "Software Engineer · CodeLab × Google", zh: "软件工程师 · CodeLab × Google" },
     subtitle: { en: "Resume matching pipeline · GCP Cloud Run", zh: "简历匹配系统 · GCP Cloud Run" },
-    expandable: {
-      previewImg: "https://api.microlink.io/?url=https%3A%2F%2Fcodelabdavis.com&screenshot=true&embed=screenshot.url",
-      link: "https://codelabdavis.com",
-      linkLabel: "codelabdavis.com",
-    },
+    modal: true,
   },
   {
     icon: "zap",
@@ -143,6 +142,19 @@ const STATUS_ROWS: InfoRow[] = [
     subtitle: { en: "Backend · ML · full-stack", zh: "后端 · ML · 全栈" },
   },
 ];
+
+const CODELAB_EXP = {
+  previewImg: _p("codelab.png"),
+  title: { en: "CodeLab × Google", zh: "CodeLab × Google" },
+  role: { en: "Software Engineer", zh: "软件工程师" },
+  description: {
+    en: "Built a resume-to-job-description matching pipeline for a Google-sponsored CodeLab Davis project. Designed and deployed a cloud-native NLP service on GCP Cloud Run that semantically matches candidate profiles against job listings at scale. Collaborated with a cross-functional student engineering team in an agile sprint environment.",
+    zh: "在 Google 赞助的 CodeLab Davis 项目中构建简历与职位描述语义匹配系统。在 GCP Cloud Run 上设计并部署了处理大规模候选人档案的云原生 NLP 服务。与跨职能学生工程团队在敏捷冲刺环境中协作完成。",
+  },
+  tags: ["Python", "GCP Cloud Run", "NLP", "Google Cloud"],
+  link: "https://codelabdavis.com",
+  linkLabel: "codelabdavis.com",
+};
 
 const copy = (lang: Lang, en: string, zh: string) => (lang === "zh" ? zh : en);
 
@@ -413,6 +425,7 @@ function App() {
   const [lang, setLang] = useState<Lang>("en");
   const [activeNav, setActiveNav] = useState("top");
   const [activeProject, setActiveProject] = useState<number | null>(null);
+  const [codelabOpen, setCodelabOpen] = useState(false);
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const planetCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const planetCardRef = useRef<HTMLDivElement | null>(null);
@@ -424,20 +437,17 @@ function App() {
   const tickerItems = useMemo(() => [...INTERESTS, ...INTERESTS], []);
 
   useEffect(() => {
-    document.body.style.overflow = activeProject === null ? "" : "hidden";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [activeProject]);
+    document.body.style.overflow = (activeProject === null && !codelabOpen) ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [activeProject, codelabOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setActiveProject(null);
+        setCodelabOpen(false);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
@@ -463,7 +473,7 @@ function App() {
 
   useEffect(() => {
     window.lucide?.createIcons();
-  }, [lang, activeProject]);
+  }, [lang, activeProject, codelabOpen]);
 
   useEffect(() => {
     const canvas = bgCanvasRef.current;
@@ -747,7 +757,14 @@ function App() {
           <div className="card card-status hov">
             <div className="ctitle">{copy(lang, "// currently", "// 当前状态")}</div>
             {STATUS_ROWS.map((row) => (
-              <StatusRow key={row.title.en} icon={row.icon} tone={row.tone} title={row.title[lang]} subtitle={row.subtitle[lang]} expandable={row.expandable} />
+              <StatusRow
+                key={row.title.en}
+                icon={row.icon}
+                tone={row.tone}
+                title={row.title[lang]}
+                subtitle={row.subtitle[lang]}
+                onClick={row.modal ? () => setCodelabOpen(true) : undefined}
+              />
             ))}
           </div>
 
@@ -928,6 +945,44 @@ function App() {
         </div>
       </main>
 
+      <div className={`modal-bd ${codelabOpen ? "open" : ""}`} onClick={(e) => e.target === e.currentTarget && setCodelabOpen(false)}>
+        {codelabOpen && (
+          <div className="modal">
+            <div className="modal-prev">
+              <img src={CODELAB_EXP.previewImg} alt="CodeLab Davis" loading="lazy" className="modal-prev-img" />
+            </div>
+            <div className="mbody">
+              <div className="mtop">
+                <div className="micon-title">
+                  <div className="micon" style={{ background: "oklch(.92 .04 290)" }}>
+                    <LucideIcon name="cpu" size={22} style={{ color: "oklch(.40 .12 290)", display: "flex" }} />
+                  </div>
+                  <div>
+                    <div className="mtitle">{CODELAB_EXP.title[lang]}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>{CODELAB_EXP.role[lang]}</div>
+                  </div>
+                </div>
+                <button type="button" className="mclose" onClick={() => setCodelabOpen(false)}>
+                  <LucideIcon name="x" size={15} />
+                </button>
+              </div>
+              <p className="mdesc">{CODELAB_EXP.description[lang]}</p>
+              <div className="ms-title">{copy(lang, "Tech Stack", "技术栈")}</div>
+              <div className="mtags">
+                {CODELAB_EXP.tags.map((tag) => <span key={tag} className="mtag">{tag}</span>)}
+              </div>
+              <div className="ms-title">{copy(lang, "Links", "链接")}</div>
+              <div className="mlinks">
+                <a href={CODELAB_EXP.link} className="mlink pri" target="_blank" rel="noreferrer">
+                  <LucideIcon name="external-link" size={13} />
+                  {CODELAB_EXP.linkLabel}
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className={`modal-bd ${modalProject ? "open" : ""}`} onClick={(event) => event.target === event.currentTarget && setActiveProject(null)}>
         {modalProject ? (
           <div className="modal">
@@ -1004,40 +1059,22 @@ type StatusRowProps = {
   tone: string;
   title: string;
   subtitle: string;
-  expandable?: { previewImg: string; link: string; linkLabel: string };
+  onClick?: () => void;
 };
 
-function StatusRow({ icon, tone, title, subtitle, expandable }: StatusRowProps) {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (open) window.lucide?.createIcons();
-  }, [open]);
-
+function StatusRow({ icon, tone, title, subtitle, onClick }: StatusRowProps) {
   return (
-    <div
-      className={`srow ${expandable ? "srow-expandable" : ""}`}
-      onClick={expandable ? () => setOpen((o) => !o) : undefined}
-    >
+    <div className={`srow ${onClick ? "srow-clickable" : ""}`} onClick={onClick}>
       <div className={`sicon ${tone}`}>
         <LucideIcon name={icon} size={15} />
       </div>
       <div className="srow-body">
         <strong>{title}</strong>
         <span>{subtitle}</span>
-        {expandable && open && (
-          <div className="srow-expand" onClick={(e) => e.stopPropagation()}>
-            <img src={expandable.previewImg} alt={title} loading="lazy" className="srow-preview-img" />
-            <a href={expandable.link} target="_blank" rel="noreferrer" className="srow-link">
-              <LucideIcon name="external-link" size={10} />
-              {expandable.linkLabel}
-            </a>
-          </div>
-        )}
       </div>
-      {expandable && (
+      {onClick && (
         <span className="srow-chevron">
-          <LucideIcon name={open ? "chevron-up" : "chevron-down"} size={12} />
+          <LucideIcon name="arrow-up-right" size={12} />
         </span>
       )}
     </div>
