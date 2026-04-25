@@ -886,6 +886,34 @@ canvas { display: block; }
   background: var(--bg);
 }
 
+.slideshow-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.slideshow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.45);
+  cursor: pointer;
+  padding: 0;
+  pointer-events: all;
+  transition: background .18s ease, transform .18s ease;
+}
+
+.slideshow-dot.active {
+  background: #fff;
+  transform: scale(1.25);
+}
+
 .modal-prev-lbl {
   position: absolute;
   inset: 0;

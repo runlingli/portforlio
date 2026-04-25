@@ -29,7 +29,7 @@ type Project = {
   tags: string[];
   github: string | null;
   demo: string | null;
-  previewImg?: string;
+  previewImgs?: string[];
 };
 
 type InfoRow = {
@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
     tags: ["Java 21", "Spring Boot", "Redis", "Kafka", "Elasticsearch", "Spring AI"],
     github: "https://github.com/runlingli",
     demo: "https://lingocafe.online",
-    previewImg: _p("lingocafe.png"),
+    previewImgs: [_p("lingocafe1.png"), _p("lingocafe2.png"), _p("lingocafe3.png")],
   },
   {
     icon: "layers",
@@ -83,7 +83,7 @@ const PROJECTS: Project[] = [
     tags: ["Python", "Flask", "pgvector", "DeepSeek", "GCP Cloud Run", "Cloud SQL"],
     github: "https://github.com/runlingli",
     demo: "https://apps.apple.com/us/app/aconn/id6760412162",
-    previewImg: _p("aconn.png"),
+    previewImgs: [_p("aconn1.png"), _p("aconn2.png"), _p("aconn3.png")],
   },
   {
     icon: "brain",
@@ -144,7 +144,7 @@ const STATUS_ROWS: InfoRow[] = [
 ];
 
 const CODELAB_EXP = {
-  previewImg: _p("codelab.png"),
+  previewImg: _p("codelab1.png"),
   title: { en: "CodeLab × Google", zh: "CodeLab × Google" },
   role: { en: "Software Engineer", zh: "软件工程师" },
   description: {
@@ -1103,13 +1103,50 @@ function SkillGroup({ lang, labelEn, labelZh, items }: SkillGroupProps) {
   );
 }
 
+function Slideshow({ imgs }: { imgs: string[] }) {
+  const [idx, setIdx] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    if (imgs.length <= 1) return;
+    const t = setInterval(() => {
+      setFade(false);
+      setTimeout(() => { setIdx((n) => (n + 1) % imgs.length); setFade(true); }, 220);
+    }, 3000);
+    return () => clearInterval(t);
+  }, [imgs.length]);
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <img
+        src={imgs[idx]}
+        alt=""
+        className="modal-prev-img"
+        style={{ opacity: fade ? 1 : 0, transition: "opacity .22s ease" }}
+      />
+      {imgs.length > 1 && (
+        <div className="slideshow-dots">
+          {imgs.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`slideshow-dot ${i === idx ? "active" : ""}`}
+              onClick={() => { setIdx(i); setFade(true); }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProjectPreview({ project, index }: { project: Project; index: number }) {
   const patternId = `project-pattern-${index}`;
 
-  if (project.previewImg) {
+  if (project.previewImgs?.length) {
     return (
       <div className="ppreview">
-        <img src={project.previewImg} alt={project.name.en} loading="lazy" className="ppreview-img" />
+        <img src={project.previewImgs[0]} alt={project.name.en} loading="lazy" className="ppreview-img" />
       </div>
     );
   }
@@ -1136,8 +1173,8 @@ function ProjectPreview({ project, index }: { project: Project; index: number })
 function ModalPreview({ project, index }: { project: Project; index: number }) {
   const patternId = `modal-pattern-${index}`;
 
-  if (project.previewImg) {
-    return <img src={project.previewImg} alt={project.name.en} loading="lazy" className="modal-prev-img" />;
+  if (project.previewImgs?.length) {
+    return <Slideshow imgs={project.previewImgs} />;
   }
 
   return (
