@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import "./linkedin-post.css";
+
+function LucideIcon({ name, size, style }: { name: string; size: number; style?: CSSProperties }) {
+  return <i data-lucide={name} style={{ width: size, height: size, ...style }} />;
+}
 
 interface GenerationState {
   loading: boolean;
@@ -402,6 +406,12 @@ export function LinkedInPostGenerator() {
     }
   };
 
+  useEffect(() => {
+    if (state.imageUrl) {
+      (window as Window & { lucide?: { createIcons: () => void } }).lucide?.createIcons();
+    }
+  }, [state.imageUrl]);
+
   const showResults = state.headline && !state.loading && !state.error;
 
   return (
@@ -653,7 +663,7 @@ export function LinkedInPostGenerator() {
                         }}
                         title="Download image"
                       >
-                        ⬇️
+                        <LucideIcon name="download" size={16} style={{ color: "white" }} />
                       </button>
                     </>
                   ) : null}
