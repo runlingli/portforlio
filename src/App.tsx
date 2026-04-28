@@ -25,7 +25,7 @@ type Project = {
   patternRotation?: string;
   name: Record<Lang, string>;
   summary: Record<Lang, string>;
-  description: Record<Lang, string>;
+  description: Record<Lang, string[]>;
   tags: string[];
   github: string | null;
   demo: string | null;
@@ -55,8 +55,18 @@ const PROJECTS: Project[] = [
       zh: "语言学习社区平台，含短信登录、分布式计数器、AI Feed 和全文搜索，已上线 lingocafe.online。",
     },
     description: {
-      en: "Auth & Publish: Spring Security SMS OTP with dual-token stateless sessions; OSS presigned URL frontend direct upload for images, video, and Markdown; DeepSeek one-click article summarization. Counter & Like: Redis SDS binary-compact counting with Lua atomic updates and self-healing consistency rebuild; bitmap idempotency with Kafka async aggregation and disaster-replay fallback. Feed & Social Graph: Three-tier cache (Caffeine + Redis) with hotkey detection, adaptive TTL, single-flight lock; social graph synced via Outbox → Canal → Kafka pipeline. Search & AI: Elasticsearch function_score (BM25 + business signals), search_after cursor pagination, RAG Q&A with streaming LLM response.",
-      zh: "认证与发布：Spring Security 短信 OTP 双 token 无状态登录；OSS 预签名 URL 前端直传图文视频 Markdown；DeepSeek 一键文章摘要。计数与点赞：Redis SDS 紧凑存储 + Lua 原子更新 + 自愈一致性重建；Bitmap 幂等 + Kafka 异步聚合写入。Feed 与社交图：三级缓存（Caffeine + Redis）+ 热点检测 + 自适应 TTL；Outbox → Canal → Kafka 管道同步。搜索与 AI：Elasticsearch function_score（BM25 + 业务信号）+ search_after 游标分页 + 向量 RAG 流式 LLM 响应。",
+      en: [
+        "Auth & Publish: Spring Security SMS OTP, dual-token stateless sessions; OSS presigned URL frontend direct upload for images, video, and Markdown; DeepSeek one-click article summarization.",
+        "Counter & Like: Redis SDS binary-compact counting, Lua atomic updates, self-healing consistency rebuild; bitmap idempotency with Kafka async aggregation and disaster-replay fallback.",
+        "Feed & Social Graph: Three-tier cache (Caffeine + Redis), hotkey detection, adaptive TTL, single-flight lock; social graph synced via Outbox → Canal → Kafka pipeline.",
+        "Search & AI: Elasticsearch function_score (BM25 + business signals), search_after cursor pagination, RAG Q&A with streaming LLM response.",
+      ],
+      zh: [
+        "认证与发布：Spring Security 短信 OTP 双 token 无状态登录；OSS 预签名 URL 前端直传图文视频 Markdown；DeepSeek 一键文章摘要。",
+        "计数与点赞：Redis SDS 紧凑存储 + Lua 原子更新 + 自愈一致性重建；Bitmap 幂等 + Kafka 异步聚合写入。",
+        "Feed 与社交图：三级缓存（Caffeine + Redis）+ 热点检测 + 自适应 TTL；Outbox → Canal → Kafka 管道同步。",
+        "搜索与 AI：Elasticsearch function_score（BM25 + 业务信号）+ search_after 游标分页 + 向量 RAG 流式 LLM 响应。",
+      ],
     },
     tags: ["Java 21", "Spring Boot", "Redis", "Kafka", "Elasticsearch", "Spring AI"],
     github: "https://github.com/runlingli",
@@ -77,8 +87,18 @@ const PROJECTS: Project[] = [
       zh: "已上架 App Store 的 UC Davis 校园社交应用——混合 RAG + DeepSeek 意图解析，搜索延迟从 30 秒降至 3 秒，基础设施成本降低约 85%。",
     },
     description: {
-      en: "Replaced Voyage AI (rate-limited, 3 RPM) with locally-served bge-small; DeepSeek LLM intent parsing for query routing; async SSE for AI summaries — latency >30s → <3s. Scraped 10+ UC Davis department sites via Cloudflare bypass; pgvector HNSW fusing tsvector (×1.9) + cosine (×1.35); P@5 = 1.00 vs 0.80 baseline, R@10 = 1.00 vs 0.50. Cloud Run → Cloud SQL via Unix domain socket (eliminated 120s TCP hang); weekly Cloud Scheduler content pipeline with idempotent Datastore sync; ~85% infra cost reduction. Published to App Store.",
-      zh: "用本地 bge-small 替代限流 Voyage AI；DeepSeek 意图解析路由查询；异步 SSE 处理 AI 摘要——延迟从 30 秒降至 3 秒。绕过 Cloudflare 抓取 10+ UC Davis 部门网站；pgvector HNSW 融合 tsvector（×1.9）+ 余弦（×1.35）；P@5=1.00，R@10=1.00。Cloud Run → Cloud SQL Unix socket 消除 120 秒 TCP 超时；Cloud Scheduler 每周内容管道 + 幂等 Datastore 同步；基础设施成本降低约 85%。已上架 App Store。",
+      en: [
+        "Replaced Voyage AI (rate-limited, 3 RPM) with locally-served bge-small; DeepSeek LLM intent parsing for query routing; async SSE — latency >30s → <3s.",
+        "Scraped 10+ UC Davis dept sites via Cloudflare bypass; pgvector HNSW fusing tsvector (×1.9) + cosine (×1.35); P@5 = 1.00, R@10 = 1.00 vs 0.80/0.50 baseline.",
+        "Cloud Run → Cloud SQL via Unix domain socket (eliminated 120s TCP hang); weekly Cloud Scheduler pipeline, idempotent Datastore sync; ~85% infra cost reduction.",
+        "Published to App Store.",
+      ],
+      zh: [
+        "用本地 bge-small 替代限流 Voyage AI；DeepSeek 意图解析路由查询；异步 SSE——延迟从 30 秒降至 3 秒。",
+        "绕过 Cloudflare 抓取 10+ UC Davis 部门网站；pgvector HNSW 融合 tsvector（×1.9）+ 余弦（×1.35）；P@5=1.00，R@10=1.00。",
+        "Cloud Run → Cloud SQL Unix socket 消除 120 秒 TCP 超时；Cloud Scheduler 每周内容管道 + 幂等 Datastore 同步；基础设施成本降低约 85%。",
+        "已上架 App Store。",
+      ],
     },
     tags: ["Python", "Flask", "pgvector", "DeepSeek", "GCP Cloud Run", "Cloud SQL"],
     github: "https://github.com/runlingli",
@@ -99,8 +119,16 @@ const PROJECTS: Project[] = [
       zh: "AI 税务问答系统，含混合检索与 LLM critic 查询修复，RAGAS 验证：faithfulness 0.89，relevancy 0.92，recall 0.87。",
     },
     description: {
-      en: "Hybrid Retrieval: BM25 + dense vector with RRF fusion and CrossEncoder reranking for sparse IRS terminology; FastAPI + Qdrant + LangGraph orchestration. LLM Critic: LLM-based sufficiency evaluator replaces hard confidence threshold; query-rewrite retry loop with structured refusal for out-of-scope requests. Evaluation: RAGAS-validated (faithfulness 0.89, relevancy 0.92, context recall 0.87); page-level IRS citations via PyMuPDF.",
-      zh: "混合检索：BM25 + 向量检索通过 RRF 融合和 CrossEncoder 重排处理 IRS 稀疏术语；FastAPI + Qdrant + LangGraph 编排。LLM Critic：基于 LLM 的充分性评估器替代固定置信阈值；查询重写重试循环 + 结构化拒答。RAGAS 验证：faithfulness 0.89，relevancy 0.92，recall 0.87；PyMuPDF 提取页级 IRS 引用。",
+      en: [
+        "Hybrid Retrieval: BM25 + dense vector with RRF fusion and CrossEncoder reranking for sparse IRS terminology; FastAPI + Qdrant + LangGraph orchestration.",
+        "LLM Critic: LLM-based sufficiency evaluator replaces hard confidence threshold; query-rewrite retry loop with structured refusal for out-of-scope requests.",
+        "Evaluation: RAGAS-validated — faithfulness 0.89, relevancy 0.92, context recall 0.87; page-level IRS citations via PyMuPDF.",
+      ],
+      zh: [
+        "混合检索：BM25 + 向量检索通过 RRF 融合和 CrossEncoder 重排处理 IRS 稀疏术语；FastAPI + Qdrant + LangGraph 编排。",
+        "LLM Critic：基于 LLM 的充分性评估器替代固定置信阈值；查询重写重试循环 + 结构化拒答。",
+        "RAGAS 验证：faithfulness 0.89，relevancy 0.92，recall 0.87；PyMuPDF 提取页级 IRS 引用。",
+      ],
     },
     tags: ["Python", "LlamaIndex", "Qdrant", "LangGraph", "FastAPI", "RAGAS"],
     github: "https://github.com/runlingli",
@@ -148,8 +176,16 @@ const CODELAB_EXP = {
   title: { en: "CodeLab × Google", zh: "CodeLab × Google" },
   role: { en: "Software Engineer", zh: "软件工程师" },
   description: {
-    en: "Built a resume-to-job-description matching pipeline for a Google-sponsored CodeLab Davis project. Designed and deployed a cloud-native NLP service on GCP Cloud Run that semantically matches candidate profiles against job listings at scale. Collaborated with a cross-functional student engineering team in an agile sprint environment.",
-    zh: "在 Google 赞助的 CodeLab Davis 项目中构建简历与职位描述语义匹配系统。在 GCP Cloud Run 上设计并部署了处理大规模候选人档案的云原生 NLP 服务。与跨职能学生工程团队在敏捷冲刺环境中协作完成。",
+    en: [
+      "Built a resume-to-job-description matching pipeline for a Google-sponsored CodeLab Davis project.",
+      "Designed and deployed a cloud-native NLP service on GCP Cloud Run for semantic matching of candidate profiles against job listings at scale.",
+      "Collaborated with a cross-functional student engineering team in an agile sprint environment.",
+    ],
+    zh: [
+      "在 Google 赞助的 CodeLab Davis 项目中构建简历与职位描述语义匹配系统。",
+      "在 GCP Cloud Run 上设计并部署了处理大规模候选人档案的云原生 NLP 服务。",
+      "与跨职能学生工程团队在敏捷冲刺环境中协作完成。",
+    ],
   },
   tags: ["Python", "GCP Cloud Run", "NLP", "Google Cloud"],
   link: "https://codelabdavis.com",
@@ -926,6 +962,43 @@ function App() {
             </div>
           </div>
 
+          <div className="fun-section">
+            <div className="proj-hdr">
+              <span className="proj-hdr-lbl">{copy(lang, "// just for fun", "// 好玩的")}</span>
+              <div className="proj-hdr-line" />
+            </div>
+            <div className="fun-grid">
+              <button
+                type="button"
+                className="card card-proj fun-card"
+                onClick={() => (window as any).navigate?.("/linkedin-post")}
+              >
+                <div className="ppreview">
+                  <Slideshow imgs={[_p("linkedin1.png"), _p("linkedin2.png"), _p("linkedin3.png")]} imgClassName="ppreview-img" />
+                </div>
+                <div className="pbody">
+                  <div className="ptop">
+                    <div className="picon" style={{ background: "oklch(.93 .05 70)" }}>
+                      <LucideIcon name="sparkles" size={18} style={{ color: "oklch(.55 .14 60)" }} />
+                    </div>
+                    <span className="parrow"><LucideIcon name="arrow-up-right" size={17} /></span>
+                  </div>
+                  <div className="pname">{copy(lang, "Fake LinkedIn Post Machine", "假 LinkedIn 帖子生成器")}</div>
+                  <div className="pdesc">{copy(lang, "Generates ridiculously polished fictional professional updates — powered by AI", "AI 生成荒诞而精美的职场炫耀帖")}</div>
+                  <div className="ptags">
+                    <span className="ptag">DeepSeek</span>
+                    <span className="ptag">gpt-image-2</span>
+                    <span className="ptag fun-toy-tag">{copy(lang, "just for fun", "好玩的")}</span>
+                  </div>
+                  <div className="pcta">
+                    <LucideIcon name="mouse-pointer-click" size={11} />
+                    <span>{copy(lang, "Try it", "去玩玩")}</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           <div className="card card-ticker hov">
             <div className="ticker-lbl">
               <LucideIcon name="chevrons-right" size={12} />
@@ -966,7 +1039,9 @@ function App() {
                   <LucideIcon name="x" size={15} />
                 </button>
               </div>
-              <p className="mdesc">{CODELAB_EXP.description[lang]}</p>
+              <ul className="mdesc-list">
+                {CODELAB_EXP.description[lang].map((point, i) => <li key={i}>{point}</li>)}
+              </ul>
               <div className="ms-title">{copy(lang, "Tech Stack", "技术栈")}</div>
               <div className="mtags">
                 {CODELAB_EXP.tags.map((tag) => <span key={tag} className="mtag">{tag}</span>)}
@@ -1001,7 +1076,9 @@ function App() {
                   <LucideIcon name="x" size={15} />
                 </button>
               </div>
-              <p className="mdesc">{modalProject.description[lang]}</p>
+              <ul className="mdesc-list">
+                {modalProject.description[lang].map((point, i) => <li key={i}>{point}</li>)}
+              </ul>
               <div className="ms-title">{copy(lang, "Tech Stack", "技术栈")}</div>
               <div className="mtags">
                 {modalProject.tags.map((tag) => (
@@ -1103,7 +1180,7 @@ function SkillGroup({ lang, labelEn, labelZh, items }: SkillGroupProps) {
   );
 }
 
-function Slideshow({ imgs }: { imgs: string[] }) {
+function Slideshow({ imgs, imgClassName = "modal-prev-img" }: { imgs: string[]; imgClassName?: string }) {
   const [idx, setIdx] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -1122,7 +1199,7 @@ function Slideshow({ imgs }: { imgs: string[] }) {
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <img src={imgs[idx]} alt="" className="modal-prev-img" />
+      <img src={imgs[idx]} alt="" className={imgClassName} />
       {imgs.length > 1 && (
         <div className="slideshow-dots">
           <div className="slideshow-dots-pill">

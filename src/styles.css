@@ -672,6 +672,29 @@ canvas { display: block; }
   box-shadow: 0 16px 48px oklch(.13 .015 250 / .12);
 }
 
+/* ── Fun Section ── */
+.fun-section {
+  grid-column: span 12;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: fadeUp .5s ease .4s forwards;
+}
+
+.fun-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.fun-toy-tag {
+  color: oklch(.50 .14 60) !important;
+  border-color: oklch(.84 .08 70) !important;
+  background: oklch(.95 .04 70) !important;
+}
+
 .card-proj:hover .parrow { transform: translate(3px, -3px); }
 
 .ppreview {
@@ -990,6 +1013,21 @@ canvas { display: block; }
   color: var(--muted);
   line-height: 1.75;
   margin-bottom: 20px;
+}
+
+.mdesc-list {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 20px 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mdesc-list li {
+  padding-left: 4px;
 }
 
 .ms-title {

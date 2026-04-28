@@ -92,23 +92,56 @@ function buildPrompt(
   tone: string,
   interest: string
 ): string {
+  const example1 = `Excited to share that I've just been appointed as the **Interim Chief Listening Officer** at three separate organizations simultaneously — none of which I applied for.
+
+This happened because I once said "that's interesting" during a Zoom call that turned out to be a board meeting.
+
+In the past six months, I have:
+- Reframed two industry crises as "strategic narrative opportunities"
+- Moderated a panel I was not invited to (they thanked me anyway)
+- Converted a misread calendar invite into a keynote
+
+The lesson? **Presence is a technology. Deploy it deliberately.**
+
+If you're still waiting for permission to show up, consider this your signal.
+
+#Leadership #ThoughtLeadership #StrategicListening #ProfessionalGrowth`;
+
+  const example2 = `Not many people know this, but I once **restructured an entire continent's workflow** from Gate B12.
+
+My flight was delayed four hours. I opened my laptop. I rewrote three operating models, dissolved two organizational silos, and sent a Slack message that someone later called "the most important thing I'd ever read."
+
+I wasn't even supposed to be in that airport.
+
+That's when I realized: **geography is just a mindset. Bandwidth is a choice.**
+
+Today I am proud to announce I have been asked to lead a cross-continental clarity initiative — remote, asynchronous, and entirely self-directed.
+
+The work finds you when you're ready.
+
+#Strategy #Leadership #AirportThinking #GlobalImpact #IWasJustTryingToGetHome`;
+
   return [
-    "Write a parody LinkedIn post.",
-    "It must be obviously fictional, exaggerated, and humorous.",
-    "This is entertainment only, not a real professional claim.",
-    "Invent fake experience, fake wins, fake thought-leadership moments, and fake impact.",
-    "For legendary mode, make the fabricated experience genuinely laughable and impossible, but still written in polished LinkedIn language.",
-    "Examples of legendary exaggeration: advising three startups before breakfast, scaling culture across continents from an airport lounge, converting an accidental spreadsheet into a movement, being asked to moderate a panel after solving an industry bottleneck in a group chat.",
-    "Keep it sounding like a smug, over-polished LinkedIn post.",
-    "Do not include disclaimers inside the generated post.",
-    "Do not mention AI or say it is parody inside the output.",
-    "Structure: short opening hook, inflated reflection, hilariously fake experience, fake takeaway, signoff, hashtags.",
+    "Write a parody LinkedIn post in the exact style of the examples below.",
+    "CRITICAL FORMATTING RULES:",
+    "- Output the post text ONLY. No titles, no labels, no 'Post:', no 'Title:', no preamble.",
+    "- Always use markdown: **bold** for key phrases, line breaks between paragraphs, bullet lists where appropriate.",
+    "- End with 4–6 hashtags on the final line.",
+    "- Do not include disclaimers, do not mention AI, do not say it is parody.",
+    "",
+    "EXAMPLE 1:",
+    example1,
+    "",
+    "EXAMPLE 2:",
+    example2,
+    "",
+    "Now write a new one for:",
     `Name: ${name}`,
     `Dream career: ${career}`,
     `Current status: ${stage}`,
     `Delusion level: ${tone}`,
     `Vague interest: ${interest}`,
-  ].join("\n\n");
+  ].join("\n");
 }
 
 function buildTips(career: string, tone: string): Array<[string, string]> {
@@ -223,8 +256,12 @@ async function generateImage(career: string, interest: string, postContent: stri
     return "";
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 90000);
+
   try {
     const prompt = customPrompt || generateImagePrompt(career, interest, postContent);
+    console.log("Generating image with prompt:", prompt.slice(0, 80) + "...");
 
     const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
@@ -232,14 +269,17 @@ async function generateImage(career: string, interest: string, postContent: stri
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
+      signal: controller.signal,
       body: JSON.stringify({
-        model: "dall-e-3",
+        model: "gpt-image-2",
         prompt: prompt,
         n: 1,
         size: "1024x1024",
-        quality: "standard",
+        quality: "low",
       }),
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -248,9 +288,21 @@ async function generateImage(career: string, interest: string, postContent: stri
     }
 
     const data = await response.json();
-    console.log("Image generated successfully:", data);
-    return data.data?.[0]?.url || "";
+    console.log("Image API response keys:", Object.keys(data));
+    const item = data.data?.[0];
+    console.log("Image item keys:", item ? Object.keys(item) : "no item");
+    if (item?.url) {
+      console.log("Got URL response");
+      return item.url;
+    }
+    if (item?.b64_json) {
+      console.log("Got b64_json response, length:", item.b64_json.length);
+      return `data:image/png;base64,${item.b64_json}`;
+    }
+    console.warn("No url or b64_json in response item:", item);
+    return "";
   } catch (error) {
+    clearTimeout(timeoutId);
     console.warn("Image generation error:", error);
     return "";
   }
