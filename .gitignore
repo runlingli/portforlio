@@ -6,4 +6,6 @@ dist
 Portfolio.html
 Portfolio_star.html
 globe-loader.html
+.env
+.env.local
 
