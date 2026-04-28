@@ -974,7 +974,7 @@ function App() {
                 onClick={() => (window as any).navigate?.("/linkedin-post")}
               >
                 <div className="ppreview">
-                  <Slideshow imgs={[_p("linkedin1.png"), _p("linkedin2.png"), _p("linkedin3.png")]} imgClassName="ppreview-img" />
+                  <img src={_p("linkedin1.png")} alt="LinkedIn Post Machine" loading="lazy" className="ppreview-img" />
                 </div>
                 <div className="pbody">
                   <div className="ptop">
