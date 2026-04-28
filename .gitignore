@@ -8,7 +8,14 @@ Portfolio_star.html
 globe-loader.html
 .env
 .env.local
-*.md
+CHANGES_SUMMARY.md
+DALLE_INTEGRATION.md
+DALLE_QUICK_START.md
+LINKEDIN_GENERATOR.md
+LINKEDIN_STYLE.md
+REDESIGN_SUMMARY.md
+UI_IMPROVEMENTS.md
+.impeccable.md
 .claude/
 career-post.html
 
