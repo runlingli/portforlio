@@ -267,7 +267,7 @@ async function generateImage(career: string, interest: string, postContent: stri
     const prompt = customPrompt || generateImagePrompt(career, interest, postContent);
     console.log("Generating image with prompt:", prompt.slice(0, 80) + "...");
 
-    const response = await fetch("https://api.openai.com/v1/images/generations", {
+    const response = await fetch("/openai-proxy/v1/images/generations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
