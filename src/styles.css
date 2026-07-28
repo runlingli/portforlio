@@ -1259,19 +1259,15 @@ canvas { display: block; }
     padding: 12px;
   }
 
+  /* Drop the grid entirely on mobile. Even with a 1fr template the browser
+     kept the desktop's 12 content-sized tracks as ghost columns, so cards
+     spanned only their sum (~240px) and left the right half blank. A flex
+     column sidesteps all of that: every card stretches to full width. */
   .bento {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
   }
-
-  .card-hero,
-  .card-planet,
-  .card-status,
-  .card-about,
-  .card-contact,
-  .reloc-section,
-  .card-skills,
-  .card-ticker { grid-column: 1 / -1; }
 
   .globe-inner {
     grid-template-columns: 1fr;
