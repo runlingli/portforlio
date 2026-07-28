@@ -184,7 +184,14 @@ canvas { display: block; }
   margin: 0 auto;
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: 1fr; /* mobile-first: single column, stacks by default */
+}
+
+/* desktop: the 12-column bento grid */
+@media (min-width: 769px) {
+  .bento {
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
 
 .card {
