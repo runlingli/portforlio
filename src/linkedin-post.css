@@ -815,13 +815,15 @@ select:focus {
   }
 
   .linkedin-search {
-    flex: 0.2;
-    min-width: 100px;
+    flex: 1;
+    min-width: 0;
   }
 
+  /* The parody nav menu (Home / Connections / ...) is decorative chrome and
+     never fits a phone. Hiding it kills the horizontal overflow that was
+     forcing a wide viewport and leaving a blank right strip. */
   .linkedin-nav-items {
-    gap: 12px;
-    font-size: 0.8rem;
+    display: none;
   }
 
   .generator-main {

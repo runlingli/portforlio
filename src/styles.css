@@ -1226,6 +1226,7 @@ canvas { display: block; }
     transform: none;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     padding: 6px 10px;
     bottom: auto;
     gap: 4px;
