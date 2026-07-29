@@ -1270,6 +1270,14 @@ canvas { display: block; }
     gap: 10px;
   }
 
+  /* Same as .bento: the "Just for fun" 3-column grid left project cards
+     half-width with a blank right side on phones. Stack them full width. */
+  .fun-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .globe-inner {
     grid-template-columns: 1fr;
     gap: 1.5rem;
